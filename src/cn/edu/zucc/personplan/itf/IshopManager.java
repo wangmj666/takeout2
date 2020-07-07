@@ -1,6 +1,9 @@
 package cn.edu.zucc.personplan.itf;
 
-import cn.edu.zucc.personplan.model.BeanUser;
+import java.util.List;
+
+import cn.edu.zucc.personplan.model.BeanPlan;
+import cn.edu.zucc.personplan.model.*;
 import cn.edu.zucc.personplan.model.Business_information;
 import cn.edu.zucc.personplan.util.BaseException;
 
@@ -17,6 +20,8 @@ public interface IshopManager {
 	 * @throws BaseException
 	 */
 	public Business_information reg(String shopid, String pwd,String pwd2) throws BaseException;
+	
+	
 	/**
 	 * 登陆
 	 * 1、如果用户不存在或者密码错误，抛出一个异常
@@ -27,6 +32,17 @@ public interface IshopManager {
 	 * @throws BaseException
 	 */
 	public Business_information login(String shopid,String shopname)throws BaseException;
+	
+	/**
+	 * 添加计划
+	 * 要求新增的计划的排序号为当前用户现有最大排序号+1
+	 * 注意：当前登陆用户可通过 BeanUser.currentLoginUser获取
+	 * @param name  计划名称
+	 * @throws BaseException
+	 */
+	public List<Commodity_categories> loadAll()throws BaseException;
+	
+	
 	/**
 	 * 修改密码
 	 * 如果没有成功修改，则抛出异常

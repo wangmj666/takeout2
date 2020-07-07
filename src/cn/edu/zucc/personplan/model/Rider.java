@@ -3,6 +3,7 @@ package cn.edu.zucc.personplan.model;
 import java.util.Date;
 
 public class Rider {
+	public static Rider currentLoginUser=null;
 	private String rider_id;
 	private String rider_name;
 	private Date joining_date;
@@ -31,6 +32,12 @@ public class Rider {
 	}
 	public void setRider_level(String rider_level) {
 		this.rider_level = rider_level;
+	}
+	public static Rider getCurrentLoginUser() {
+		return currentLoginUser;
+	}
+	public static void setCurrentLoginUser(Rider currentLoginUser) {
+		Rider.currentLoginUser = currentLoginUser;
 	}
 
 }

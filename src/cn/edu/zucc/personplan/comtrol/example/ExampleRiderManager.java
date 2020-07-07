@@ -3,55 +3,54 @@ package cn.edu.zucc.personplan.comtrol.example;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
+import cn.edu.zucc.personplan.util.BusinessException;
+import cn.edu.zucc.personplan.itf.IRiderManager;
 import cn.edu.zucc.personplan.itf.IUserManager;
 import cn.edu.zucc.personplan.itf.IshopManager;
-import cn.edu.zucc.personplan.model.*;
 import cn.edu.zucc.personplan.model.BeanUser;
 import cn.edu.zucc.personplan.model.Business_information;
-import cn.edu.zucc.personplan.model.Commodity_categories;
+import cn.edu.zucc.personplan.model.Rider;
+import cn.edu.zucc.personplan.util.BaseException;
 import cn.edu.zucc.personplan.util.*;
-public class ExampleshopManager implements IshopManager {
+public class ExampleRiderManager implements IRiderManager {
 
-	@Override
-	public Business_information reg(String shopid, String pwd,String pwd2) throws BaseException {
+	public Rider reg(String riderid, String pwd,String pwd2) throws BaseException {
 		// TODO Auto-generated method stub
 		
 		
-		if(shopid==null||"".equals(shopid))throw new BusinessException("ID不能为空");
+		if(riderid==null||"".equals(riderid))throw new BusinessException("ID不能为空");
 		//if(!pwd.equals(pwd2))throw new BusinessException("两次输入商店名字不一致");
-		if(pwd==null||"".equals(pwd))throw new BusinessException("shop name不能为空");
+		if(pwd==null||"".equals(pwd))throw new BusinessException("rider name不能为空");
 		Connection conn=null;
 		try {
 			
 			conn=DBUtil.getConnection();
-			String sql="select * from Business_information where shop_id=?";
+			String sql="select * from rider where rider_id=?";
 			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
-			pst.setString(1,shopid);
+			pst.setString(1,riderid);
 			java.sql.ResultSet rs=pst.executeQuery();
-			if(rs.next()) throw new BusinessException("登陆shop ID账号已经存在");
+			if(rs.next()) throw new BusinessException("登陆rider ID账号已经存在");
 			
 			rs.close();
 			pst.close();
 			
-			sql="insert into Business_information(shop_id,shop_name,Merchants_star) values(?,?,?)";
+			sql="insert into rider(rider_id,rider_name,joining_date,rider_level) values(?,?,now(),?)";
 			pst=conn.prepareStatement(sql);
-			pst.setString(1, shopid);
+			pst.setString(1, riderid);
 			pst.setString(2, pwd);
 			pst.setString(3, pwd2);
 			pst.execute();
 			rs.close();
 			pst.close();
 			
-			Business_information shoper=new Business_information();
-			shoper.setShop_id(shopid);
-			shoper.setShop_name(pwd);
-			shoper.setMerchants_star(pwd2);
-			System.out.println("店注册完毕");
-			return shoper;
+			Rider rd=new Rider();
+			rd.setRider_id(riderid);
+			rd.setRider_name(pwd);
+			rd.setRider_level(pwd2);
+			return rd;
+			
+			
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -71,29 +70,28 @@ public class ExampleshopManager implements IshopManager {
 	}
 
 	
-	@Override
-	public Business_information login(String shopid, String shopname) throws BaseException {
+	public Rider login(String riderid, String ridername) throws BaseException {
 		// TODO Auto-generated method stub
-		if(shopid==null||"".equals(shopid))throw new BusinessException("shop ID不能为空");
-		if(shopname==null||"".equals(shopname))throw new BusinessException("shop name不能为空");
+		if(riderid==null||"".equals(riderid))throw new BusinessException("rider ID不能为空");
+		if(ridername==null||"".equals(ridername))throw new BusinessException("rider name不能为空");
 		Connection conn=null;
 		try {
 			conn=DBUtil.getConnection();
-			String sql="select * from Business_information where shop_id=? and shop_name=?";
+			String sql="select * from rider where shop_id=? and shop_name=?";
 			java.sql.PreparedStatement pst=conn.prepareStatement(sql);
-			pst.setString(1,shopid);	
-			pst.setString(2,shopname);
+			pst.setString(1,riderid);	
+			pst.setString(2,ridername);
 			java.sql.ResultSet rs=pst.executeQuery();
-			if(!rs.next()) throw new BusinessException("shop ID不存在或shop name错误");
+			if(!rs.next()) throw new BusinessException("rider ID不存在或rider name错误");
 			
 			rs.close();
 			pst.close();
 			
-			Business_information shoper=new Business_information();
-			shoper.setShop_id(shopid);
-			shoper.setShop_name(shopname);
+			Rider rd=new Rider();
+			rd.setRider_id(riderid);
+			rd.setRider_name(ridername);
 			System.out.println("核对完毕");
-			return shoper;
+			return rd;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -109,41 +107,6 @@ public class ExampleshopManager implements IshopManager {
 				}
 		}
 		
-	}
-	@Override
-	public List<Commodity_categories> loadAll()throws BaseException {//当前登录的shop_id 
-		List<Commodity_categories> result=new ArrayList<Commodity_categories>();
-		Connection conn=null;
-		try {
-			conn=DBUtil.getConnection();
-			String sql="select * from commodity_categories where shop_id=? ";
-			java.sql.PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setString(1,Business_information.currentLoginshop.getShop_id() );
-			java.sql.ResultSet rs=pst.executeQuery();
-			while(rs.next()) {
-				Commodity_categories p=new Commodity_categories();
-				p.setShop_id(Business_information.currentLoginshop.getShop_id());
-				p.setGood_fl(rs.getString(2));
-				p.setClassify_name(rs.getString(3));
-				p.setGood_num(rs.getInt(4));
-				
-				result.add(p);
-			}
-		}
-		catch(SQLException ex) {
-			throw new DbException(ex);
-		}
-		finally {
-			if(conn!=null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		}
-		
-		return result;
 	}
 
 

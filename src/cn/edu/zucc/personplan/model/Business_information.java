@@ -1,6 +1,10 @@
 package cn.edu.zucc.personplan.model;
 
 public class Business_information {
+	public static final String[] tableTitles={"商家编号","商家名","商家星级","人均消费","总销量","步骤数"};
+	/**
+	 * 请自行根据javabean的设计修改本函数代码，col表示界面表格中的列序号，0开始
+	 */
 	public static Business_information currentLoginshop=null;
 	private String shop_id;
 	private String shop_name;

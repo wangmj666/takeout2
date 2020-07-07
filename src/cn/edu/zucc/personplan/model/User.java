@@ -3,6 +3,7 @@ package cn.edu.zucc.personplan.model;
 import java.util.Date;
 
 public class User {
+	public static User currentLoginUser=null;
 	private int user_id;
 	private String user_name;
 	private String user_sex;
@@ -74,5 +75,11 @@ public class User {
 	public void setVip_lastdate(Date vip_lastdate) {
 		this.vip_lastdate = vip_lastdate;
 	}
-
+	public static User getCurrentLoginUser() {
+		return currentLoginUser;
+	}
+	public static void setCurrentLoginUser(User currentLoginUser) {
+		User.currentLoginUser = currentLoginUser;
+	}
+	
 }
